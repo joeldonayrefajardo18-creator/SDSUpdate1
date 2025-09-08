@@ -1,0 +1,639 @@
+.incident-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: none;
+  color: #4b3c2f;
+}
+
+.incident-header-bar {
+  display: flex;
+  justify-content: space-between; /* title left, user-account right */
+  align-items: center; /* vertical alignment */
+  margin-bottom: 15px;
+}
+
+.user-profile {
+  font-weight: bold;
+}
+
+.violation-entry {
+  background-color: white;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.violation-entry h3 {
+  margin-bottom: 15px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.form-grid label {
+  font-size: 14px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.form-grid input,
+.form-grid select {
+  width: 100%;
+  height: 38px;
+  padding: 7px 10px;
+  border: 1px solid #aaa;
+  border-radius: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.add-btn {
+  width: 100%;               /* fill the grid cell like an input/select */
+  height: 38px;              /* same height as inputs */
+  padding: 7px 12px;         /* same vertical padding as other controls */
+  background-color: #5D3C16;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;        /* match other controls' radius */
+  box-sizing: border-box;
+  align-self: start;         /* align to top of the grid cell (same baseline as select) */
+  box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+}
+
+
+/* optional small responsive tweak so the button drops under select on very narrow screens */
+@media (max-width: 640px) {
+  .form-grid div[style] > div {
+    flex-direction: column;
+  }
+  .form-grid > div:last-child {
+    grid-column: 1 / -1;
+  }
+  .add-btn {
+    width: 100%;
+  }
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between; /* search left, buttons right */
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* search input expands on the left */
+.search-input {
+  flex: 1 1 420px;
+  max-width: 325px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #5D3C16;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* right-side group for the three buttons */
+.controls-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls-right .bulk-upload,
+.controls-right .export-btn,
+.controls-right .filter-btn {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 5px;
+}
+
+.table-controls input {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #5D3C16;
+  border-radius: none;
+}
+
+.bulk-upload,
+.export-btn,
+.download-btn {
+  height: 38px;
+  background-color: #6b4e2e;
+  color: white;
+  border: none;
+  padding: 0 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.incident-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.incident-table th,
+.incident-table td {
+  border: none ;
+  padding: 8px;
+  text-align: center;
+}
+
+.view-btn {
+  height: 30px;
+  background-color: #4b3c2f;
+  color: white;
+  border: none;
+  padding: 0 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.download-template {
+  margin-top: 15px;
+}
+
+.download-template button {
+  background-color: white;
+  border: 1px solid #aaa;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.bulk-upload,
+.export-btn,
+.download-btn {
+  height: 38px;
+  background-color: #5D3C16; /* Updated color */
+  color: white;
+  border: none;
+  padding: 0 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2); /* Drop shadow y=5, blur=5 */
+}
+
+.download-template {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.download-template button {
+  background-color: #5D3C16; /* Updated color */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2); /* Drop shadow y=5, blur=5 */
+}
+
+/* --- Modal (updated for Major Offense multi-step look) --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* default centered modal */
+.modal-content {
+  width: 760px;
+  max-width: 96%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+  overflow: hidden;
+  animation: fadeIn 0.18s ease-in-out;
+  color: #2e2a25;
+  position: relative;
+  transform: translateY(0);
+  padding: 18px 22px 18px;
+}
+
+/* popover (positioned under/above the button) */
+.modal-content.popover {
+  position: absolute;
+  width: auto;
+  min-width: 200px;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  border-radius: 6px;
+  padding: 8px;
+  background: #fff;
+  z-index: 1200;
+  /* allow internal scrolling when viewport is small */
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* small action menu buttons inside popover */
+.action-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.action-modal-buttons button {
+  background: white;
+  border: 1px solid #e6ded0;
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #32261c;
+}
+.action-modal-buttons button:hover {
+  background: #f6efe4;
+}
+
+/* hide the extra brown square/strip above the inner title (keeps inner brown title strip) */
+.major-modal-topbar {
+  display: none; /* removed per request */
+}
+
+/* title strip inside the modal body (brown bar under topbar) */
+.major-modal-header-strip {
+  background: #5d3c16;
+  color: #fff;
+  padding: 8px 12px;
+  margin: 12px 0 8px;
+  border-radius: 4px;
+}
+.major-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* content area inside modal */
+.major-modal-container {
+  padding: 0 0 10px 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* subtitle */
+.major-modal-subtitle {
+  font-size: 13px;
+  color: #6b5a4a;
+  margin-bottom: 10px;
+}
+
+/* progress dots row */
+.major-modal-progress {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.major-modal-progress .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e6e0d9;
+  box-shadow: none;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.major-modal-progress .dot.active {
+  background: #1f1a16;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.15) inset;
+}
+
+/* step body layout */
+.major-modal-body {
+  background: #fff;
+  padding: 6px 0 0;
+  color: #2e2a25;
+}
+
+/* step content */
+.major-modal-step {
+  display: block;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.major-modal-step label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #2e2a25;
+  font-size: 14px;
+}
+
+.major-modal-step input[type="text"],
+.major-modal-step select,
+.major-modal-step textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d6c9b2;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #2e2a25;
+  background: #fff;
+}
+
+/* textarea sizing for step 1 */
+.major-modal-step textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* committee grid in step 2 */
+.major-modal-committee {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 18px;
+}
+.major-modal-committee .full {
+  grid-column: 1 / -1;
+}
+
+/* checkboxes/radio-like controls in the Major modal:
+   - show text to the right of the control
+   - control is circular (no square box)
+   - fills circle when checked
+*/
+.major-modal-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 8px;              /* reduced gap to suit smaller control */
+  font-weight: 400;
+  font-size: 13px;
+  color: #332a22;
+  cursor: pointer;
+}
+
+/* make the circular control smaller (3rd step radios/checkboxes) */
+.major-modal-checkboxes input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;           /* smaller size */
+  height: 12px;
+  min-width: 12px;
+  border-radius: 50%;
+  border: 2px solid #d6c9b2; /* slightly thinner ring */
+  background: transparent;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+  box-shadow: none;
+  outline: none;
+  transform: translateY(7px); /* visually center with label text */
+}
+
+/* checked state: fill the small circle with dark color */
+.major-modal-checkboxes input[type="checkbox"]:checked {
+  background: #1f1a16;
+  border-color: #1f1a16;
+}
+
+/* focus ring tuned for smaller control */
+.major-modal-checkboxes input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(93,60,22,0.06);
+}
+
+/* keep multi-column layout but ensure labels line up nicely */
+.major-modal-checkboxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 28px;
+  margin-top: 6px;
+}
+
+/* if a label wraps to two lines, keep control vertically centered with text */
+.major-modal-checkboxes label > span,
+.major-modal-checkboxes label > small {
+  display: inline-block;
+}
+
+/* action buttons (Back / Save / Done) aligned right */
+.major-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Back = beige light button */
+.btn-back {
+  background: #e7d7be;
+  color: #3e2f23;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 82px;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+}
+
+/* Primary Save/Done = brown */
+.btn-primary {
+  background: #5d3c16;
+  color: #fff;
+  border: 1px solid #4a2f12;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 82px;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.12);
+}
+
+/* slight layout tweak for modal title (outer) */
+.modal-title {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #3b2f25;
+}
+
+/* modal actions for non-popovers */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Filter button (beside Export) */
+.filter-btn {
+  height: 38px;
+  background-color: #6b4e2e;
+  color: white;
+  border: none;
+  padding: 0 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 5px 5px rgba(0,0,0,0.15);
+}
+
+/* Filter popover adjustments: ensure internal content always visible and scrollable */
+.filter-popover {
+  width: 360px;
+  background: #fff;
+  border-radius: 6px;
+  overflow: visible; /* outer wrapper uses .modal-content.popover for scroll */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  border: 1px solid #e6ded0;
+  box-sizing: border-box;
+}
+
+/* brown header strip: solid brown title inside the box (no extra outer gap) */
+.filter-header {
+  background: #6b4b2a;       /* brown */
+  color: #fff;
+  padding: 14px 20px;       /* comfortable vertical + horizontal padding */
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  border-bottom: none;      /* remove subtle divider so header sits flush in box */
+}
+
+/* body: consistent inner padding / indentation */
+.filter-body {
+  padding: 16px 20px;
+  color: #2e2a25;
+  box-sizing: border-box;
+}
+
+/* year grid: align radio and label text, with small indentation */
+.filter-year-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 18px;
+  margin-top: 8px;
+}
+.filter-year-grid label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding-left: 6px;    /* subtle indent so items are not flush */
+  user-select: none;
+  font-size: 14px;
+  color: #2e2a25;
+}
+
+/* remove native radio box and render as small circular dot that fills when checked */
+.filter-year-grid input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1px;
+  height: 1px;
+  min-width: 1px;
+  border-radius: 50%;
+  border: 2px solid #cfc7bb; /* subtle ring */
+  background: transparent;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  transform: translateY(8px); 
+}
+
+/* checked state: fill the small circle with the brown/dark color */
+.filter-year-grid input[type="radio"]:checked {
+  background: #1f1a16;
+  border-color: #1f1a16;
+}
+
+/* focus ring for keyboard users */
+.filter-year-grid input[type="radio"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(93,60,22,0.06);
+}
+
+/* ensure the radio sits nicely vertically with the text */
+.filter-year-grid input[type="radio"] + span,
+.filter-year-grid input[type="radio"] + .label-text {
+  line-height: 1;
+}
+
+/* filter items (checkboxes) in the filter popover */
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  cursor: pointer;
+  padding-left: 6px;    /* keep the same indentation as other items */
+  user-select: none;
+}
+.filter-item input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  border-radius: 50%;
+  border: 2px solid #cfc7bb; /* subtle ring */
+  background: transparent;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  transform: translateY(4px); /* visually center with label text */
+}
+.filter-item input[type="checkbox"]:checked {
+  background: #1f1a16;
+  border-color: #1f1a16;
+}
+.filter-item input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(93,60,22,0.06);
+}
+.filter-item span {
+  font-size: 14px;
+  color: #2e2a25;
+  line-height: 1;
+}
+
+/* keep previous fadeIn keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ensure popover positions correctly on small screens */
+@media (max-width: 420px) {
+  .modal-content.popover { left: 4vw !important; width: 92vw !important; max-width: 92vw !important; }
+  .filter-popover { width: 100% !important; }
+  .filter-body { padding: 12px; }
+}
+
+/* small responsive tweak */
+@media (max-width: 760px) {
+  .modal-content { width: 96%; left: 2% !important; right: 2% !important; }
+  .major-modal-committee { grid-template-columns: 1fr; }
+  .major-modal-checkboxes { grid-template-columns: 1fr; }
+}
+

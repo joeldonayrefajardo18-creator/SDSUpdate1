@@ -1,0 +1,187 @@
+.dashboard-container {
+  padding: 20px 32px;
+  background-color: #e6d9c6;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  color: #000;
+}
+
+.dashboard-header {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card Styles */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ccc;
+}
+
+/* Section Titles */
+.card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Donut Chart */
+.chart-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.chart-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.verbal {
+  background-color: #d2a56a;
+}
+
+.written {
+  background-color: #a4702d;
+}
+
+.suspension {
+  background-color: #5b3d1e;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  border: 1px solid #000;
+}
+
+th {
+  background-color: #8c6239;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Line Chart Image */
+.line-chart-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
+.table-scroll-container {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.table-scroll-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-scroll-container thead {
+  background-color: #8B4513;
+  color: white;
+}
+
+.table-scroll-container th,
+.table-scroll-container td {
+  padding: 10px;
+  text-align: left;
+}
+
+.table-body-scroll {
+  max-height: 240px; /* Enough for ~6 rows */
+  overflow-y: auto;
+}
+
+.table-body-scroll table {
+  width: 100%;
+}
+
+.table-body-scroll tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.dashboard-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.user-account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  padding: 6px 12px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.account-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.account-name {
+  color: #000;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+  margin-left: 4px;
+}

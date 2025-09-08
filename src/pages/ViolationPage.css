@@ -1,0 +1,323 @@
+/* src/pages/ViolationPage.css */
+
+.violation-container {
+    padding: 2rem;
+    background-color: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+.violation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.violation-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: #000000;
+}
+
+.violation-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 200px;
+}
+
+.btn {
+    padding: 0.5rem 0.9rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.primary {
+    background-color: #5D3C16;
+    color: #fff;
+}
+
+.primary:hover {
+    background-color: #5a340c;
+}
+
+.secondary {
+    background-color: #d4b996;
+    color: #000;
+}
+
+.secondary:hover {
+    background-color: #c5a47e;
+}
+
+.download {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.download:hover {
+    background-color: #f0f0f0;
+}
+
+.violation-table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.violation-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.violation-table th,
+.violation-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.violation-table th {
+    background-color: #5D3C16;
+    color: #333;
+    font-weight: 600;
+}
+
+.violation-table td {
+    background-color: #fff;
+}
+
+.icon {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.edit-icon {
+    color: #5D3C16;
+}
+
+.edit-icon:hover {
+    color: #5D3C16;
+}
+
+.delete-icon {
+    color: #5D3C16;
+}
+
+.delete-icon:hover {
+    color: #5D3C16;
+}
+
+.download-template {
+    margin-top: 1rem;
+    text-align: right;
+}
+
+/* Buttons: Add, Bulk Upload, Export */
+.btn.primary,
+.btn.secondary {
+    background-color: #5D3C16;
+    color: white;
+    border: none;
+}
+
+.btn.primary:hover,
+.btn.secondary:hover {
+    background-color: #4a3012;
+}
+
+/* Table header text color */
+.violation-table thead th {
+    color: white;
+    background-color: #5D3C16; /* Optional: match header background */
+    padding: 10px;
+}
+
+/* Controls layout */
+.violation-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* USER INFO */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #5D3C16;
+}
+
+.user-icon {
+    font-size: 1.5rem;
+}
+
+/* FILTER */
+.filter-select {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* FILTER DROPDOWN */
+.filter-dropdown {
+    position: absolute;
+    margin-top: 0.5rem;
+    right: 2rem;
+    z-index: 2000;
+}
+
+.filter-modal {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 1rem;
+    width: 250px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.filter-modal h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.2rem;
+    background: #5D3C16;
+    color: white;
+    padding: 0.4rem;
+    border-radius: 6px;
+}
+
+/* ===================================== */
+/* MODAL OVERLAY (common for Add & Edit) */
+/* ===================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* MODAL BOX (new design for Add/Edit) */
+.modal-box {
+    background: #fff;
+    width: 400px;
+    max-width: 90%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+/* HEADER */
+.modal-header {
+    background: #5D3C16;
+    padding: 0.8rem 1rem;
+}
+
+.modal-header h3 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* BODY */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+
+.modal-body label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.modal-body input,
+.modal-body select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* FOOTER */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: #f9f9f9;
+}
+
+/* BUTTONS */
+.btn.cancel {
+    background: #ccc;
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn.cancel:hover {
+    background: #b3b3b3;
+}
+
+.btn.add {
+    background: #5D3C16;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn.add:hover {
+    background: #4a3012;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
