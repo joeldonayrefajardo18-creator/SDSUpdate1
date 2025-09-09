@@ -2,10 +2,14 @@ import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./StudentIncidentPage.css";
 
-const API_URL = "http://localhost/SDSUpdate1-main/backend/Student.php"; // change path
+const API_URL = "http://localhost/SDSUpdate1-main/backend/Student.php"; 
+const GRADE_URL = "http://localhost/SDSUpdate1-main/backend/Grade.php";
+const SECTION_URL = "http://localhost/SDSUpdate1-main/backend/Section.php";
+const STRAND_URL = "http://localhost/SDSUpdate1-main/backend/Strand.php";
+const DEPARTMENT_URL = "http://localhost/SDSUpdate1-main/backend/Department.php";
 
 export default function StudentIncidentPage() {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([]); 
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -20,12 +24,41 @@ export default function StudentIncidentPage() {
   const filterRef = useRef(null);
   const navigate = useNavigate();
 
-  // 📌 Fetch students on load
+  // Dropdown data
+  const [grades, setGrades] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [strands, setStrands] = useState([]);
+  const [departments, setDepartments] = useState([]);
+
+  // Fetch students on load
   useEffect(() => {
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => setStudents(data))
       .catch((err) => console.error("Fetch error:", err));
+  }, []);
+
+  // Fetch dropdown data
+  useEffect(() => {
+    fetch(GRADE_URL)
+      .then((res) => res.json())
+      .then((data) => setGrades(data))
+      .catch((err) => console.error("Grade fetch error:", err));
+
+    fetch(SECTION_URL)
+      .then((res) => res.json())
+      .then((data) => setSections(data))
+      .catch((err) => console.error("Section fetch error:", err));
+
+    fetch(STRAND_URL)
+      .then((res) => res.json())
+      .then((data) => setStrands(data))
+      .catch((err) => console.error("Strand fetch error:", err));
+
+    fetch(DEPARTMENT_URL)
+      .then((res) => res.json())
+      .then((data) => setDepartments(data))
+      .catch((err) => console.error("Department fetch error:", err));
   }, []);
 
   // Close filter if clicking outside
@@ -39,14 +72,14 @@ export default function StudentIncidentPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 📌 Add Student (POST)
+  // Add Student (POST)
   const handleAddStudent = (e) => {
     e.preventDefault();
     const form = e.target;
     const newStudent = {
       name: form.name.value,
       email: form.email.value,
-      id: form.id.value,
+      student_id: form.id.value,
       department: form.department?.value || "",
       year: form.year?.value || "",
       grade: form.grade?.value || "",
@@ -57,20 +90,25 @@ export default function StudentIncidentPage() {
     };
 
     fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newStudent),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setStudents([...students, newStudent]);
-        setShowAddModal(false);
-        setSelectedLevel("");
-      })
-      .catch((err) => console.error("Add error:", err));
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(newStudent),
+})
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      setStudents([...students, data.student]); // ✅ append galing backend
+      setShowAddModal(false);
+      setSelectedLevel("");
+    } else {
+      alert("Error adding student: " + data.error);
+    }
+  })
+  .catch((err) => console.error("Add error:", err));
+
   };
 
-  // 📌 Edit Student (PUT)
+  // Edit Student (PUT)
   const handleEditStudent = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -98,12 +136,12 @@ export default function StudentIncidentPage() {
           prev.map((s) => (s.id === selectedStudent.id ? updatedStudent : s))
         );
         setShowEditModal(false);
-        setSelectedStudent(null); // Reset selected student state
+        setSelectedStudent(null);
       })
       .catch((err) => console.error("Edit error:", err));
   };
 
-  // 📌 Delete Student (DELETE)
+  // Delete Student (DELETE)
   const handleDeleteStudent = (id) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
 
@@ -116,7 +154,7 @@ export default function StudentIncidentPage() {
       .catch((err) => console.error("Delete error:", err));
   };
 
-  // Bulk upload (dummy)
+  // Bulk upload
   const handleBulkUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -154,7 +192,7 @@ export default function StudentIncidentPage() {
     navigate("/incident", { state: { student } });
   };
 
-  // 🔍 Live + Filter
+  // 🔍 Filtering
   const filteredStudents = useMemo(() => {
     let data = [...students];
 
@@ -183,7 +221,7 @@ export default function StudentIncidentPage() {
     return data;
   }, [students, filterAZ, filterDepartment, filterYear, searchTerm]);
 
-  // Reusable conditional form fields
+  // Render fields
   const renderFields = (level, student = {}) => {
     switch (level) {
       case "junior":
@@ -191,56 +229,85 @@ export default function StudentIncidentPage() {
           <>
             <label>ID*</label>
             <input name="id" defaultValue={student.id} required />
+
             <label>Grade*</label>
             <select name="grade" defaultValue={student.grade} required>
-              <option value="">Select Grade</option>
-              {[7, 8, 9, 10].map((g) => (
-                <option key={g} value={g}>
-                  Grade {g}
-                </option>
-              ))}
-            </select>
+  <option value="">Select Grade</option>
+  {grades.map((g) => (
+    <option key={g.id} value={g.grade}>
+      {g.grade}
+    </option>
+  ))}
+</select>
+
+
             <label>Section*</label>
             <select name="section" defaultValue={student.section} required>
-              <option value="">Select Section</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-            </select>
+  <option value="">Select Section</option>
+  {sections.map((s) => (
+    <option key={s.id} value={s.section}>
+      {s.section}
+    </option>
+  ))}
+</select> 
           </>
         );
+
       case "senior":
         return (
           <>
             <label>ID*</label>
             <input name="id" defaultValue={student.id} required />
+
             <label>Grade*</label>
             <select name="grade" defaultValue={student.grade} required>
-              <option value="">Select Grade</option>
-              <option value="11">Grade 11</option>
-              <option value="12">Grade 12</option>
-            </select>
+  <option value="">Select Grade</option>
+  {grades.map((g) => (
+    <option key={g.id} value={g.grade}>
+      {g.grade}
+    </option>
+  ))}
+</select>
+
+
             <label>Section*</label>
             <select name="section" defaultValue={student.section} required>
-              <option value="">Select Section</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-            </select>
+  <option value="">Select Section</option>
+  {sections.map((s) => (
+    <option key={s.id} value={s.section}>
+      {s.section}
+    </option>
+  ))}
+</select>
+
             <label>Strand*</label>
-            <input name="strand" defaultValue={student.strand} required />
+            <select name="strand" defaultValue={student.strand} required>
+  <option value="">Select Strand</option>
+  {strands.map((st) => (
+    <option key={st.id} value={st.strand}>
+      {st.strand}
+    </option>
+  ))}
+</select>
           </>
         );
+
       case "college":
         return (
           <>
             <label>ID*</label>
             <input name="id" defaultValue={student.id} required />
+
             <label>Department*</label>
             <select name="department" defaultValue={student.department} required>
-              <option value="">Select Department</option>
-              <option value="BSIT">BSIT</option>
-              <option value="BSED">BSED</option>
-              <option value="BSBA">BSBA</option>
-            </select>
+  <option value="">Select Department</option>
+  {departments.map((d) => (
+    <option key={d.id} value={d.department}>
+      {d.department}
+    </option>
+  ))}
+</select>
+
             <label>Year*</label>
             <select name="year" defaultValue={student.year} required>
               <option value="">Select Year</option>
@@ -251,6 +318,7 @@ export default function StudentIncidentPage() {
             </select>
           </>
         );
+
       default:
         return null;
     }
@@ -342,9 +410,11 @@ export default function StudentIncidentPage() {
                   onChange={(e) => setFilterDepartment(e.target.value)}
                 >
                   <option value="">All Departments</option>
-                  <option value="BSIT">BSIT</option>
-                  <option value="BSED">BSED</option>
-                  <option value="BSBA">BSBA</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.name}>
+                      {d.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               {/* Year */}
@@ -584,4 +654,4 @@ export default function StudentIncidentPage() {
       )}
     </div>
   );
-}
+} 

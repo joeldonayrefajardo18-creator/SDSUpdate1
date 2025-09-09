@@ -91,20 +91,25 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "sssssssss",
         $data['name'],
         $data['email'],
-        $data['id'],
+        $data['student_id'],
         $data['department'],
         $data['year'],
         $data['grade'],
         $data['section'],
-        $data['strand'],
+        $data['strand'],        
         $data['status']
     );
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Student added"]);
-    } else {
-        echo json_encode(["success" => false, "error" => $stmt->error]);
-    }
+    $insertedId = $conn->insert_id;
+    $result = $conn->query("SELECT * FROM students WHERE id = $insertedId");
+    $newStudent = $result->fetch_assoc();
+
+    echo json_encode(["success" => true, "student" => $newStudent]);
+} else {
+    echo json_encode(["success" => false, "error" => $stmt->error]);
+}
+
     $stmt->close();
 }
 
@@ -125,7 +130,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $data['section'],
         $data['strand'],
         $data['status'],
-        $data['id']
+        $data['student_id']
     );
 
     if ($stmt->execute()) {
@@ -148,10 +153,15 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $stmt->bind_param("s", $id);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Student deleted"]);
-    } else {
-        echo json_encode(["success" => false, "error" => $stmt->error]);
-    }
+    $insertedId = $conn->insert_id; // last auto id
+    $result = $conn->query("SELECT * FROM students WHERE id = $insertedId");
+    $newStudent = $result->fetch_assoc();
+
+    echo json_encode(["success" => true, "student" => $newStudent]);
+} else {
+    echo json_encode(["success" => false, "error" => $stmt->error]);
+}
+
     $stmt->close();
 }
 
