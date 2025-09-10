@@ -30,12 +30,17 @@ export default function StudentIncidentPage() {
   const [strands, setStrands] = useState([]);
   const [departments, setDepartments] = useState([]);
 
-  // Fetch students on load
-  useEffect(() => {
+  // --- Helper: a simple reload function to keep UI in sync ---
+  const reloadStudents = () => {
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => setStudents(data))
       .catch((err) => console.error("Fetch error:", err));
+  };
+
+  // Fetch students on load
+  useEffect(() => {
+    reloadStudents();
   }, []);
 
   // Fetch dropdown data
@@ -79,7 +84,7 @@ export default function StudentIncidentPage() {
     const newStudent = {
       name: form.name.value,
       email: form.email.value,
-      student_id: form.id.value,
+      student_id: form.id.value, // backend expects 'student_id'
       department: form.department?.value || "",
       year: form.year?.value || "",
       grade: form.grade?.value || "",
@@ -90,21 +95,25 @@ export default function StudentIncidentPage() {
     };
 
     fetch(API_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(newStudent),
-})
-  .then((res) => res.json())
-  .then((data) => {
-    if (data.success) {
-      setStudents([...students, data.student]); // ✅ append galing backend
-      setShowAddModal(false);
-      setSelectedLevel("");
-    } else {
-      alert("Error adding student: " + data.error);
-    }
-  })
-  .catch((err) => console.error("Add error:", err));
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newStudent),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // refresh list from backend to get canonical record (id, student_id, etc.)
+          reloadStudents();
+          setShowAddModal(false);
+          setSelectedLevel("");
+        } else {
+          alert("Error adding student: " + (data.error || data.message));
+        }
+      })
+      .catch((err) => {
+        console.error("Add error:", err);
+        alert("Add failed. See console for details.");
+      });
 
   };
 
@@ -112,17 +121,21 @@ export default function StudentIncidentPage() {
   const handleEditStudent = (e) => {
     e.preventDefault();
     const form = e.target;
+
+    // Build payload with backend field names; include student_id
     const updatedStudent = {
-      ...selectedStudent,
+      // keep DB id if you want, but backend looks up by student_id
+      id: selectedStudent.id,
+      student_id: form.id.value || selectedStudent.student_id, // important
       name: form.name.value,
       email: form.email.value,
-      id: form.id.value,
       department: form.department?.value || "",
       year: form.year?.value || "",
       grade: form.grade?.value || "",
       section: form.section?.value || "",
       strand: form.strand?.value || "",
       status: form.status.value,
+      level: selectedStudent.level || "",
     };
 
     fetch(API_URL, {
@@ -131,35 +144,64 @@ export default function StudentIncidentPage() {
       body: JSON.stringify(updatedStudent),
     })
       .then((res) => res.json())
-      .then(() => {
-        setStudents((prev) =>
-          prev.map((s) => (s.id === selectedStudent.id ? updatedStudent : s))
-        );
+      .then((data) => {
+        // refresh list to reflect canonical backend state
+        reloadStudents();
         setShowEditModal(false);
         setSelectedStudent(null);
       })
-      .catch((err) => console.error("Edit error:", err));
+      .catch((err) => {
+        console.error("Edit error:", err);
+        alert("Update failed. See console for details.");
+      });
   };
 
   // Delete Student (DELETE)
-  const handleDeleteStudent = (id) => {
+  const handleDeleteStudent = (studentId) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
 
-    fetch(`${API_URL}?id=${id}`, { method: "DELETE" })
+    fetch(`${API_URL}?id=${encodeURIComponent(studentId)}`, { method: "DELETE" })
       .then((res) => res.json())
-      .then(() => {
-        setStudents(students.filter((s) => s.id !== id));
+      .then((data) => {
+        // refresh list after delete
+        reloadStudents();
         setShowViewModal(false);
       })
-      .catch((err) => console.error("Delete error:", err));
+      .catch((err) => {
+        console.error("Delete error:", err);
+        alert("Delete failed. See console for details.");
+      });
   };
 
   // Bulk upload
   const handleBulkUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      alert(`File "${file.name}" uploaded! (Add processing logic)`);
-    }
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file); // backend reads $_FILES['file']
+
+    fetch(API_URL, {
+      method: "POST",
+      body: formData, // do NOT set Content-Type; browser will set boundary
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          alert(`Bulk upload complete: ${data.rows_processed} rows, ${data.inserted} added/updated`);
+          reloadStudents();
+        } else {
+          alert("Bulk upload failed: " + (data.error || JSON.stringify(data)));
+        }
+      })
+      .catch((err) => {
+        console.error("Bulk upload error:", err);
+        alert("Bulk upload failed. See console for details.");
+      })
+      .finally(() => {
+        // reset the input so same file can be selected again
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      });
   };
 
   const handleExport = () => {
@@ -198,13 +240,13 @@ export default function StudentIncidentPage() {
 
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
-      data = data.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.id.toLowerCase().includes(q) ||
-          s.department.toLowerCase().includes(q) ||
-          s.year.toLowerCase().includes(q)
-      );
+      data = data.filter((s) => {
+        const name = (s.name || "").toString().toLowerCase();
+        const sid = (s.student_id || s.id || "").toString().toLowerCase();
+        const dept = (s.department || "").toString().toLowerCase();
+        const year = (s.year || "").toString().toLowerCase();
+        return name.includes(q) || sid.includes(q) || dept.includes(q) || year.includes(q);
+      });
     }
 
     if (filterDepartment) {
@@ -214,9 +256,9 @@ export default function StudentIncidentPage() {
       data = data.filter((s) => s.year === filterYear);
     }
     if (filterAZ === "asc") {
-      data.sort((a, b) => a.name.localeCompare(b.name));
+      data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     } else if (filterAZ === "desc") {
-      data.sort((a, b) => b.name.localeCompare(a.name));
+      data.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
     }
     return data;
   }, [students, filterAZ, filterDepartment, filterYear, searchTerm]);
@@ -228,28 +270,28 @@ export default function StudentIncidentPage() {
         return (
           <>
             <label>ID*</label>
-            <input name="id" defaultValue={student.id} required />
+            <input name="id" defaultValue={student.student_id ?? student.id} required />
 
             <label>Grade*</label>
             <select name="grade" defaultValue={student.grade} required>
-  <option value="">Select Grade</option>
-  {grades.map((g) => (
-    <option key={g.id} value={g.grade}>
-      {g.grade}
-    </option>
-  ))}
-</select>
+              <option value="">Select Grade</option>
+              {grades.map((g) => (
+                <option key={g.id} value={g.grade}>
+                  {g.grade}
+                </option>
+              ))}
+            </select>
 
 
             <label>Section*</label>
             <select name="section" defaultValue={student.section} required>
-  <option value="">Select Section</option>
-  {sections.map((s) => (
-    <option key={s.id} value={s.section}>
-      {s.section}
-    </option>
-  ))}
-</select> 
+              <option value="">Select Section</option>
+              {sections.map((s) => (
+                <option key={s.id} value={s.section}>
+                  {s.section}
+                </option>
+              ))}
+            </select> 
           </>
         );
 
@@ -261,34 +303,34 @@ export default function StudentIncidentPage() {
 
             <label>Grade*</label>
             <select name="grade" defaultValue={student.grade} required>
-  <option value="">Select Grade</option>
-  {grades.map((g) => (
-    <option key={g.id} value={g.grade}>
-      {g.grade}
-    </option>
-  ))}
-</select>
+              <option value="">Select Grade</option>
+              {grades.map((g) => (
+                <option key={g.id} value={g.grade}>
+                  {g.grade}
+                </option>
+              ))}
+            </select>
 
 
             <label>Section*</label>
             <select name="section" defaultValue={student.section} required>
-  <option value="">Select Section</option>
-  {sections.map((s) => (
-    <option key={s.id} value={s.section}>
-      {s.section}
-    </option>
-  ))}
-</select>
+              <option value="">Select Section</option>
+              {sections.map((s) => (
+                <option key={s.id} value={s.section}>
+                  {s.section}
+                </option>
+              ))}
+            </select>
 
             <label>Strand*</label>
             <select name="strand" defaultValue={student.strand} required>
-  <option value="">Select Strand</option>
-  {strands.map((st) => (
-    <option key={st.id} value={st.strand}>
-      {st.strand}
-    </option>
-  ))}
-</select>
+              <option value="">Select Strand</option>
+              {strands.map((st) => (
+                <option key={st.id} value={st.strand}>
+                  {st.strand}
+                </option>
+              ))}
+            </select>
           </>
         );
 
@@ -300,13 +342,13 @@ export default function StudentIncidentPage() {
 
             <label>Department*</label>
             <select name="department" defaultValue={student.department} required>
-  <option value="">Select Department</option>
-  {departments.map((d) => (
-    <option key={d.id} value={d.department}>
-      {d.department}
-    </option>
-  ))}
-</select>
+              <option value="">Select Department</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.department}>
+                  {d.department}
+                </option>
+              ))}
+            </select>
 
             <label>Year*</label>
             <select name="year" defaultValue={student.year} required>
@@ -458,10 +500,10 @@ export default function StudentIncidentPage() {
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map((s, idx) => (
-            <tr key={idx}>
+          {filteredStudents.map((s) => (
+            <tr key={s.id ?? s.student_id}>
               <td>{s.name}</td>
-              <td>{s.id}</td>
+              <td>{s.student_id ?? s.id}</td>
               <td>{s.department || "-"}</td>
               <td>{s.section || "-"}</td>
               <td>{s.grade || "-"}</td>
@@ -654,4 +696,4 @@ export default function StudentIncidentPage() {
       )}
     </div>
   );
-} 
+}
