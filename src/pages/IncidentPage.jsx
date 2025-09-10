@@ -13,7 +13,9 @@ function IncidentPage() {
 
   // State
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [violations, setViolations] = useState([]);
+  const [violations, setViolations] = useState([]); // keep if used elsewhere
+  const [typeOptions, setTypeOptions] = useState([]); // options returned by backend for selected type
+
   const [formData, setFormData] = useState({
     type: "",
     sanction: "",
@@ -131,22 +133,36 @@ function IncidentPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // ===========================
-    // ADD: Open Major modal on select
-    // ===========================
-    if (name === "type" && value === "Major") {
-      if (!selectedStudent) {
-        alert("Select a student first before choosing 'Major'.");
-        return;
-      }
-      // If first time, ensure step tracker is initialized to 0 (no steps saved yet)
-      setMajorSteps((prev) => ({ ...prev, [selectedStudent.id]: prev[selectedStudent.id] || 0 }));
-      // Always open Step 1 when selecting Major from the dropdown
-      openMajorModal(selectedStudent, 1);
+    // When the user selects the type, fetch the matching options from backend
+    if (name === "type") {
+      setTypeOptions([]); // clear current options
+      if (!value) return;
+
+      // Adjust baseUrl if your backend is served under a different path/port.
+      const baseUrl = "http://localhost/SDSUpdate1-main/backend/Incident.php";
+      const url = `${baseUrl}?type=${encodeURIComponent(value)}`;
+
+      fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+          // backend returns array of { id, name }
+          if (Array.isArray(data)) {
+            setTypeOptions(data);
+            // If Minor -> set violation default; if Major -> set sanction default
+            if (value === "Minor") {
+              setFormData((prev) => ({ ...prev, violation: data[0]?.name || "" }));
+            } else if (value === "Major") {
+              setFormData((prev) => ({ ...prev, sanction: data[0]?.name || "" }));
+            }
+          } else {
+            setTypeOptions([]);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load type options:", err);
+          setTypeOptions([]); // keep UI usable
+        });
     }
-    // ===========================
-    // END ADD
-    // ===========================
   };
 
   // Add violation
@@ -347,11 +363,24 @@ function IncidentPage() {
               name="violation"
               value={formData.violation}
               onChange={handleChange}
+              disabled={formData.type !== "Minor"}
             >
               <option value="">Select</option>
-              <option value="No Uniform">No Uniform</option>
-              <option value="Cheating">Cheating</option>
-              <option value="Disrespect">Disrespect</option>
+
+              {formData.type === "Minor" && typeOptions.length > 0
+                ? typeOptions.map((opt) => (
+                    <option key={opt.id} value={opt.name}>
+                      {opt.name}
+                    </option>
+                  ))
+                : formData.type === "Minor" && (
+                    <>
+                      {/* fallback static options if backend returns none */}
+                      <option value="No Uniform">No Uniform</option>
+                      <option value="Cheating">Cheating</option>
+                      <option value="Disrespect">Disrespect</option>
+                    </>
+                  )}
             </select>
           </div>
           <div>
@@ -377,13 +406,26 @@ function IncidentPage() {
               name="sanction"
               value={formData.sanction}
               onChange={handleChange}
+              disabled={formData.type !== "Major"}
             >
               <option value="">Select Sanction</option>
-              <option value="">Oral Warning</option>
-              <option value="Written Warning">Written Warning</option>
-              <option value="Suspension">Suspension</option>
-              <option value="">Exclusion</option>
-              <option value="Community Service">Community Service</option>
+
+              {formData.type === "Major" && typeOptions.length > 0
+                ? typeOptions.map((opt) => (
+                    <option key={opt.id} value={opt.name}>
+                      {opt.name}
+                    </option>
+                  ))
+                : formData.type === "Major" && (
+                    <>
+                      {/* fallback static options */}
+                      <option value="Oral Warning">Oral Warning</option>
+                      <option value="Written Warning">Written Warning</option>
+                      <option value="Suspension">Suspension</option>
+                      <option value="Exclusion">Exclusion</option>
+                      <option value="Community Service">Community Service</option>
+                    </>
+                  )}
             </select>
           </div>
 
