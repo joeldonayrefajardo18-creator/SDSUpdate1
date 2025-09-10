@@ -209,7 +209,7 @@ export default function StudentIncidentPage() {
       ["Name", "ID", "Department", "Year"],
       ...students.map((s) => [s.name, s.id, s.department, s.year]),
     ]
-      .map((row) => row.join(","))
+      .map((row) => row.join(','))
       .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
@@ -540,48 +540,57 @@ export default function StudentIncidentPage() {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="modal">
-          <div className="modal-display">
-            <h3>Add Student</h3>
-            <form onSubmit={handleAddStudent} className="add-student-form">
-              <label>
-                Name<span className="required">*</span>
-              </label>
-              <input name="name" required />
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3>Add Student</h3>
+            </div>
+            <form onSubmit={handleAddStudent}>
+              <div className="modal-body">
+                <label>
+                  Name<span className="required">*</span>
+                </label>
+                <input name="name" required />
 
-              <label>
-                Email<span className="required">*</span>
-              </label>
-              <input name="email" type="email" required />
+                <label>
+                  Email<span className="required">*</span>
+                </label>
+                <input name="email" type="email" required />
 
-              {/* Radio Buttons */}
-              <div className="radio-group-horizontal">
-                {["junior", "senior", "college"].map((lvl) => (
-                  <label key={lvl} className="radio-option">
-                    <input
-                      type="radio"
-                      name="level"
-                      value={lvl}
-                      checked={selectedLevel === lvl}
-                      onChange={(e) => setSelectedLevel(e.target.value)}
-                      required
-                    />
-                    {lvl === "junior"
-                      ? "Junior High School"
-                      : lvl === "senior"
-                      ? "Senior High School"
-                      : "College"}
-                  </label>
-                ))}
+                {/* Radio Buttons */}
+                <div className="radio-group-horizontal">
+                  {["junior", "senior", "college"].map((lvl) => (
+                    <label key={lvl} className="radio-option">
+                      <input
+                        type="radio"
+                        name="level"
+                        value={lvl}
+                        checked={selectedLevel === lvl}
+                        onChange={(e) => setSelectedLevel(e.target.value)}
+                        required
+                      />
+                      {lvl === "junior"
+                        ? "Junior High School"
+                        : lvl === "senior"
+                        ? "Senior High School"
+                        : "College"}
+                    </label>
+                  ))}
+                </div>
+
+                {renderFields(selectedLevel)}
               </div>
-
-              {renderFields(selectedLevel)}
-
-              <div className="button-row">
-                <button type="button" onClick={() => setShowAddModal(false)}>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn cancel"
+                  onClick={() => setShowAddModal(false)}
+                >
                   Cancel
                 </button>
-                <button type="submit">Add</button>
+                <button type="submit" className="btn add">
+                  Add
+                </button>
               </div>
             </form>
           </div>
@@ -590,44 +599,48 @@ export default function StudentIncidentPage() {
 
       {/* View Modal */}
       {showViewModal && selectedStudent && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>View Student</h3>
-            <div className="view-details">
-              <p>
-                <b>Name:</b> {selectedStudent.name}
-              </p>
-              <p>
-                <b>Email:</b> {selectedStudent.email || "N/A"}
-              </p>
-              <p>
-                <b>Student ID:</b> {selectedStudent.id}
-              </p>
-              <p>
-                <b>Department:</b> {selectedStudent.department}
-              </p>
-              <p>
-                <b>Section:</b> {selectedStudent.section}
-              </p>
-              <p>
-                <b>Grade:</b> {selectedStudent.grade}
-              </p>
-              <p>
-                <b>Strand:</b> {selectedStudent.strand}
-              </p>
-              <p>
-                <b>Year:</b> {selectedStudent.year}
-              </p>
-
-              {renderFields(selectedStudent.level, selectedStudent)}
-
-              <p>
-                <b>Status:</b> {selectedStudent.status || "Active"}
-              </p>
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3>View Student</h3>
             </div>
-            <div className="modal-actions bottom-right">
+            <div className="modal-body">
+              <div className="view-details">
+                <p>
+                  <b>Name:</b> {selectedStudent.name}
+                </p>
+                <p>
+                  <b>Email:</b> {selectedStudent.email || "N/A"}
+                </p>
+                <p>
+                  <b>Student ID:</b> {selectedStudent.id}
+                </p>
+                <p>
+                  <b>Department:</b> {selectedStudent.department}
+                </p>
+                <p>
+                  <b>Section:</b> {selectedStudent.section}
+                </p>
+                <p>
+                  <b>Grade:</b> {selectedStudent.grade}
+                </p>
+                <p>
+                  <b>Strand:</b> {selectedStudent.strand}
+                </p>
+                <p>
+                  <b>Year:</b> {selectedStudent.year}
+                </p>
+
+                {renderFields(selectedStudent.level, selectedStudent)}
+
+                <p>
+                  <b>Status:</b> {selectedStudent.status || "Active"}
+                </p>
+              </div>
+            </div>
+            <div className="modal-footer">
               <button
-                className="btn close"
+                className="btn cancel"
                 onClick={() => setShowViewModal(false)}
               >
                 Close
@@ -654,41 +667,51 @@ export default function StudentIncidentPage() {
 
       {/* Edit Modal */}
       {showEditModal && selectedStudent && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Edit Student</h3>
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3>Edit Student</h3>
+            </div>
             <form onSubmit={handleEditStudent}>
-              <label>Name*</label>
-              <input
-                name="name"
-                defaultValue={selectedStudent.name}
-                required
-              />
+              <div className="modal-body">
+                <label>Name*</label>
+                <input
+                  name="name"
+                  defaultValue={selectedStudent.name}
+                  required
+                />
 
-              <label>Email*</label>
-              <input
-                name="email"
-                type="email"
-                defaultValue={selectedStudent.email || ""}
-                required
-              />
+                <label>Email*</label>
+                <input
+                  name="email"
+                  type="email"
+                  defaultValue={selectedStudent.email || ""}
+                  required
+                />
 
-              {renderFields(selectedStudent.level, selectedStudent)}
+                {renderFields(selectedStudent.level, selectedStudent)}
 
-              <label>Status*</label>
-              <select
-                name="status"
-                defaultValue={selectedStudent.status || "Active"}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                <label>Status*</label>
+                <select
+                  name="status"
+                  defaultValue={selectedStudent.status || "Active"}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
 
-              <div className="button-row">
-                <button type="button" onClick={() => setShowEditModal(false)}>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn cancel"
+                  onClick={() => setShowEditModal(false)}
+                >
                   Cancel
                 </button>
-                <button type="submit">Save</button>
+                <button type="submit" className="btn add">
+                  Save
+                </button>
               </div>
             </form>
           </div>

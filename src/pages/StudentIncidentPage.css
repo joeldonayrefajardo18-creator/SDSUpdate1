@@ -139,137 +139,6 @@
   background-color: #f1f1f1;
 }
 
-/* Modal */
-/* Modal Overlay */
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  overflow: auto;
-}
-
-/* Modal Box */
-.modal-display {
-  background: white;
-  border-radius: 6px;
-  width: 500px;
-  max-width: 95vw;
-  max-height: 90vh;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  overflow-y: auto;
-  padding-bottom: 16px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
-  .modal-display {
-    width: 98vw;
-    min-width: unset;
-    max-width: 98vw;
-    padding: 0 2vw;
-  }
-}
-
-/* Modal Header */
-.modal-display h3 {
-  margin: 0;
-  background-color: #5D3C16; /* brown bar */
-  color: white;
-  padding: 10px 15px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-/* Form Layout */
-.modal-display form {
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  gap: 8px;
-}
-
-/* Labels */
-.modal-display label {
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
-
-/* Inputs & Dropdowns */
-.modal-display input,
-.modal-display select {
-  padding: 7px 10px;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-  width: 100%;
-}
-
-.modal-display input:focus,
-.modal-display select:focus {
-  border-color: #5D3C16;
-  box-shadow: 0 0 4px rgba(93, 60, 22, 0.4);
-}
-
-/* Radio Buttons Container */
-.modal-display .radio-group {
-  display: flex;
-  gap: 15px;
-  margin: 5px 0 10px;
-}
-
-.modal-display .radio-group label {
-  font-weight: normal;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Buttons */
-.modal-display .button-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.modal-display button {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-}
-
-.modal-display button[type="submit"] {
-  background-color: #5D3C16;
-  color: white;
-}
-
-.modal-display button[type="submit"]:hover {
-  background-color: #4b2f11;
-}
-
-.modal-display button[type="button"] {
-  background-color: #ddd;
-  color: black;
-}
-
-.modal-d button[type="button"]:hover {
-  background-color: #ccc;
-}
-
 .osa-text {
   display: flex;
   align-items: center;
@@ -431,47 +300,6 @@
   cursor: pointer;
 }
 
-/* View Modal Details */
-.view-details {
-  padding: 15px;
-}
-
-.view-details p {
-  margin: 6px 0;
-  font-size: 0.95rem;
-}
-
-.view-details b {
-  display: inline-block;
-  width: 120px; /* aligns labels */
-  color: #333;
-}
-
-/* Action buttons in View Modal */
-/* Aligns buttons at bottom right in View Modal */
-.modal-actions.bottom-right {
-  display: flex;
-  justify-content: flex-end; /* push to right */
-  gap: 12px;
-  padding: 12px 16px;
-  border-top: 1px solid #eee; /* subtle separator */
-}
-
-.modal-actions .btn.close {
-  background-color: #5D3C16;
-  color: white;
-}
-
-.modal-actions .btn.edit {
-  background-color: #5D3C16;
-  color: white;
-}
-
-.modal-actions .btn.delete {
-  background-color: #c62828;
-  color: white;
-}
-
 /* Arrange ID, Department, Year in a row */
 .form-row {
   display: flex;
@@ -483,24 +311,6 @@
   flex: 1;
 }
 
-.modal-actions.bottom-right {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 12px 16px;
-  border-top: 1px solid #eee;
-}
-
-.modal-actions .btn.close {
-  background-color: #ddd;
-  color: black;
-}
-
-.modal-actions .btn.edit {
-  background-color: #5D3C16;
-  color: white;
-}
-
 .student-table th,
 .student-table td {
   padding: 10px 12px;
@@ -508,27 +318,6 @@
   font-size: 0.9rem;
   white-space: nowrap; /* prevents text from wrapping */
 }
-
-/* For Add Modal */
-.modal-display {
-  background: white;
-  border-radius: 6px;
-  width: 500px;               /* fixed width instead of min-width */
-  max-width: 90%;             /* responsive */
-  margin: 0 auto;             /* remove side offset */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* For View/Edit Modal */
-.modal-content {
-  background: white;
-  border-radius: 6px;
-  width: 500px;
-  max-width: 90%;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
 
 .student-table th:nth-child(1) { width: 18%; } /* Name */
 .student-table th:nth-child(2) { width: 10%; } /* ID */
@@ -539,3 +328,129 @@
 .student-table th:nth-child(7) { width: 8%; }  /* Year */
 .student-table th:nth-child(8) { width: 8%; }  /* Action */
 .student-table th:nth-child(9) { width: 9%; }  /* Incident */
+
+/* ===================================== */
+/* MODAL OVERLAY (common for Add & Edit) */
+/* ===================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* MODAL BOX (new design for Add/Edit) */
+.modal-box {
+    background: #fff;
+    width: 500px; /* Increased width for student form */
+    max-width: 90%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+/* HEADER */
+.modal-header {
+    background: #5D3C16;
+    padding: 0.8rem 1.5rem; /* Increased padding */
+}
+
+.modal-header h3 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* BODY */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Increased gap */
+    padding: 1.5rem; /* Increased padding */
+    max-height: 60vh; /* Allow body to scroll */
+    overflow-y: auto;
+}
+
+.modal-body label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.modal-body input,
+.modal-body select {
+    padding: 0.6rem; /* Increased padding */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem; /* Larger font */
+}
+
+/* FOOTER */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem; /* Increased gap */
+    padding: 1rem 1.5rem; /* Increased padding */
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+/* BUTTONS */
+.modal-footer .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.modal-footer .btn.cancel {
+    background: #e0e0e0;
+    color: #000;
+    border: none;
+}
+
+.modal-footer .btn.cancel:hover {
+    background: #d1d1d1;
+}
+
+.modal-footer .btn.add,
+.modal-footer .btn.edit,
+.modal-footer .btn.delete {
+    background: #5D3C16;
+    color: #fff;
+    border: none;
+}
+
+.modal-footer .btn.add:hover,
+.modal-footer .btn.edit:hover {
+    background: #4a3012;
+}
+
+.modal-footer .btn.delete {
+    background-color: #c62828;
+}
+.modal-footer .btn.delete:hover {
+    background-color: #a12020;
+}
+
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
